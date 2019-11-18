@@ -5,15 +5,15 @@ let fox;
 let platforms;
 let cursors;
 
-let line1;
-let line2;
-let line3;
-let line4;
 
-let spawnTime;  // frequency of the enemies spawn in seconds 
+let secCount=5 ;  
+let nextSpawn=0;  
+
+let spawnTime=3;  // frequency of the enemies spawn in seconds 
 
 
 class Example extends Phaser.Scene{
+    
     constructor(){
         super({key:"Example"});
     }
@@ -29,8 +29,7 @@ class Example extends Phaser.Scene{
     }
 
     create(){
-        spawnTime= 3; // 3s
-        line1 = this.add.group();
+        //line1 = this.add.group();
         
 
         this.add.image(400, 300, 'sky');
@@ -107,23 +106,20 @@ class Example extends Phaser.Scene{
 */
     }
 
-
-    
-
     update(time,delta){
-    
-        
 
         //level=how often the spawen time decreses
         if (time>=secCount*1000){
-            secCount+=5;// the dificuly will increase every 5 seconds
-            spawnTime-=100;
+            secCount=secCount+5;// the dificuly will increase every 5 seconds
+            spawnTime-= 0.1;
             
         }
+        
 
-        count++;
-        if (count>=spawnTime*1000){
-            //this.add.existing(new weakEnemy(this, 264, 250));
+        if (time>=nextSpawn){
+            nextSpawn=time+spawnTime*1000;
+            this.add.existing(new weakEnemy(this, 600, 250));
+            console.log(spawnTime);
         }
 
         if (fox.x < 500 ){
