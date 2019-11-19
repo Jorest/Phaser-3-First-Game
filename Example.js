@@ -1,11 +1,12 @@
 //import weakEnemy from 'weakEnemy.js'
 /** @type {import("../type/phaser")} */
 let player;
-let fox;
+let fish ;
 let platforms;
 let cursors;
-
-
+let bulletTime = 0.5;
+let bulletTmeCount= bulletTime;
+let gun ;
 let secCount=5 ;  
 let nextSpawn=0;  
 
@@ -19,10 +20,12 @@ class Example extends Phaser.Scene{
     }
    
     preload(){
+        this.load.image('gun', 'assets/gun.png');
         this.load.image('fox', 'assets/fox.png');
+        this.load.image('fish', 'assets/jellyfish.png');
         this.load.image('sky', 'assets/sky.png');
         this.load.image('ground', 'assets/platform.png');
-        this.load.image('star', 'assets/star.png');
+        this.load.image('bullet', 'assets/star.png');
         this.load.image('bomb', 'assets/bomb.png');
         this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
       
@@ -33,25 +36,21 @@ class Example extends Phaser.Scene{
         
 
         this.add.image(400, 300, 'sky');
+        gun =this.add.image(80, 300, 'gun');
 
-        platforms = this.physics.add.staticGroup();
-
-        platforms.create(400, 568, 'ground').setScale(2).refreshBody();
-
-        platforms.create(600, 400, 'ground');
-        platforms.create(50, 250, 'ground');
-        platforms.create(750, 220, 'ground');
+        fish =this.add.image(200, 100, 'fish');
+        
+        gun.displayHeight=90;
+        gun.displayWidth=120;
         
 
-        fox =this.physics.add.image(200, 0, 'fox');
-        
-        fox.displayHeight=100;
-        fox.displayWidth=100;
+
+        fish.displayHeight=50;
+        fish.displayWidth=50;
         //***Player 
         player = this.physics.add.sprite(100, 450, 'dude');
         player.setBounce(0.2);
         player.setCollideWorldBounds(true);
-        fox.setCollideWorldBounds(true);
 
         this.anims.create({
             key: 'left',
@@ -73,11 +72,21 @@ class Example extends Phaser.Scene{
             repeat: -1
         });
 
-        //Player END*** 
 
-        this.physics.add.collider(player, platforms);
         cursors = this.input.keyboard.createCursorKeys();
 
+
+        
+/*
+        platforms = this.physics.add.staticGroup();
+
+        platforms.create(400, 568, 'ground').setScale(2).refreshBody();
+
+        platforms.create(600, 400, 'ground');
+        platforms.create(50, 250, 'ground');
+        platforms.create(750, 220, 'ground');
+        
+*/
 
 
         /*
@@ -104,9 +113,19 @@ class Example extends Phaser.Scene{
             }
         },this);
 */
+
+        //this.physics.add.collider(player, platforms);
+
     }
 
     update(time,delta){
+
+       
+        if (time>=bulletTmeCount*1000){
+            bulletTmeCount+=bulletTime; 
+            let bullet =this.add.image(10, 300, 'bullet');
+           // bullet.setVelocityX(30);
+        }
 
         //level=how often the spawen time decreses
         if (time>=secCount*1000){
@@ -114,16 +133,16 @@ class Example extends Phaser.Scene{
             spawnTime-= 0.1;
             
         }
-        
-
         if (time>=nextSpawn){
             nextSpawn=time+spawnTime*1000;
-            this.add.existing(new weakEnemy(this, 600, 250));
+            this.add.existing(new weakEnemy(this, 600, 250,0));
             console.log(spawnTime);
         }
 
-        if (fox.x < 500 ){
-            fox.x++;
+
+
+        if (fish.x < 500 ){
+            fish.x++;
         }
 
         if (cursors.left.isDown)
