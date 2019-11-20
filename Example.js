@@ -4,14 +4,15 @@ let player;
 let fish ;
 let platforms;
 let cursors;
-let bulletTime = 0.5;
+let bulletTime = 1;
 let bulletTmeCount= bulletTime;
 let gun ;
 let secCount=5 ;  
-let nextSpawn=0;  
+let nextSpawn=0;
+let bulletSpeed=100;  
+
 
 let spawnTime=3;  // frequency of the enemies spawn in seconds 
-
 
 class Example extends Phaser.Scene{
     
@@ -33,13 +34,14 @@ class Example extends Phaser.Scene{
 
     create(){
         //line1 = this.add.group();
-        
+        this.key_A=this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
+        this.key_D=this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+
 
         this.add.image(400, 300, 'sky');
-        gun =this.add.image(80, 300, 'gun');
-
         fish =this.add.image(200, 100, 'fish');
         
+        gun =this.add.image(80, 300, 'gun');
         gun.displayHeight=90;
         gun.displayWidth=120;
         
@@ -79,16 +81,12 @@ class Example extends Phaser.Scene{
         
 /*
         platforms = this.physics.add.staticGroup();
-
         platforms.create(400, 568, 'ground').setScale(2).refreshBody();
-
         platforms.create(600, 400, 'ground');
         platforms.create(50, 250, 'ground');
         platforms.create(750, 220, 'ground');
         
 */
-
-
         /*
         this.input.keyboard.on('keyup_D',function(event) {
             this.image.x += 10;
@@ -119,14 +117,21 @@ class Example extends Phaser.Scene{
     }
 
     update(time,delta){
-
-       
         if (time>=bulletTmeCount*1000){
             bulletTmeCount+=bulletTime; 
-            let bullet =this.add.image(10, 300, 'bullet');
-           // bullet.setVelocityX(30);
-        }
+            let bullet =this.physics.add.image(100, 280, 'bullet');
+            bullet.setGravity(0,-200);
+            let bulletYSpeed = ((gun.angle*bulletSpeed)/90);
+           
+            let bulletXPos= Math.cos(gun.angle  *(Math.PI / 180))*gun.displayWidth +10;
+            let bulletYPos= Math.sin(gun.angle * (Math.PI / 180))*10 + 280;
+            bullet.setPosition(bulletXPos,bulletYPos);
+            
+            bullet.setVelocityY(bulletYSpeed);
+            bullet.setVelocityX(bulletSpeed-bulletYSpeed);
+            console.log(gun.angle,Math.cos(gun.angle  *(Math.PI / 180)));
 
+        }
         //level=how often the spawen time decreses
         if (time>=secCount*1000){
             secCount=secCount+5;// the dificuly will increase every 5 seconds
@@ -135,11 +140,11 @@ class Example extends Phaser.Scene{
         }
         if (time>=nextSpawn){
             nextSpawn=time+spawnTime*1000;
+            this.add.existing(new weakEnemy(this, 600, 150,0));
             this.add.existing(new weakEnemy(this, 600, 250,0));
-            console.log(spawnTime);
+            this.add.existing(new weakEnemy(this, 600, 350,0));
+            this.add.existing(new weakEnemy(this, 600, 450,0));
         }
-
-
 
         if (fish.x < 500 ){
             fish.x++;
@@ -170,16 +175,13 @@ class Example extends Phaser.Scene{
         }
 
 
-        
+        if(this.key_A.isDown && gun.angle<=45){
+            gun.setAngle(gun.angle +1);
+        }
 
-
-
-
-        /*
-        if(this.key_A.isDown){
-            this.image.x--;
-        }*/
-
+        if(this.key_D.isDown && gun.angle>=(-45)){
+            gun.setAngle(gun.angle -1);
+        }
     }
 
  
