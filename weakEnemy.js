@@ -9,6 +9,7 @@
         this.displayWidth=50;
         this.setSize(50,50);
         this.life=1;
+        this.speed=1;
 
 
     }
@@ -17,7 +18,7 @@
     preUpdate (time, delta)
     {
       //  super.preUpdate(time, delta);
-        this.setX(this.x-1);
+        this.setX(this.x-this.speed);
              
     }
 

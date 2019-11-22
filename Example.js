@@ -1,12 +1,12 @@
 //import weakEnemy from 'weakEnemy.js'
 /** @type {import("../type/phaser")} */
 let player;
-let fish ;
-let platforms;
+let platform;
 let cursors;
-let bulletTime = 1;
+let bulletTime = 0.3;
 let bulletTmeCount= bulletTime;
 let gun ;
+let life;
 
 let enemies ;
 let strongEnemies;
@@ -45,18 +45,20 @@ class Example extends Phaser.Scene{
         enemies = this.physics.add.group(this);
         strongEnemies = this.physics.add.group(this);
         bullets = this.add.group(this);
-        
-        this.physics.add.overlap(enemies, bullets, hitEnemy);
-        this.physics.add.collider(strongEnemies, bullets,hitEnemy2);
+  
         this.add.image(400, 300, 'sky');
-        fish =this.add.image(200, 100, 'fish');
         gun =this.add.image(60, 200, 'barrel');
         gun.setDisplaySize(120,60);
-      
         
-       // fish.displayHeight=50;
-       // fish.displayWidth=50;
+        let plataform =this.physics.add.image(150, 200, 'ground');
+        plataform.setAngle(90);
+  
         
+        this.physics.add.overlap(enemies, bullets, hitEnemy);
+        this.physics.add.overlap(strongEnemies, bullets,hitEnemy2);
+        this.physics.add.overlap(allenemies,plataform,hitPlatfrom);
+
+
         //***Player 
         player = this.physics.add.sprite(100, 450, 'dude');
         player.setBounce(0.2);
@@ -202,6 +204,14 @@ class Example extends Phaser.Scene{
         if(this.key_A.isDown && gun.angle>=(-45)){
             gun.setAngle(gun.angle -1);
         }
+
+        if (game.input.activePointer.isDown) {  
+            let b = game.input.activePointer.x- gun.x;
+            let a = -game.input.activePointer.y +gun.y;
+            let angle1= Math.atan(a/b) *(180.0/Math.PI) ;
+            gun.setAngle(-angle1);
+        }
+
     }
 
  
@@ -218,7 +228,6 @@ function hitEnemy (osea, enemy1)
 
 function hitEnemy2 (bullet, enemy2)
 {
-    enemy2.setBounce(0,0);
     enemy2.life--;
     if (enemy2.life===0){
         enemy2.destroy();
@@ -230,3 +239,9 @@ function hitEnemy2 (bullet, enemy2)
     
 }
 
+
+function hitPlatfrom (a, b)
+{
+   
+    
+}

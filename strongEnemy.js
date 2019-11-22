@@ -9,7 +9,7 @@ class strongEnemy extends Phaser.GameObjects.Image {
           this.displayWidth=50;
           this.setSize(50,50);
           this.life=2;
-          
+          this.speed=1.2;
   
       }
   
@@ -17,10 +17,9 @@ class strongEnemy extends Phaser.GameObjects.Image {
       preUpdate (time, delta)
       {
         //  super.preUpdate(time, delta);
-          this.setX(this.x-1.2);
+          this.setX(this.x-this.speed);
                
       }
-  
   
   
   }
