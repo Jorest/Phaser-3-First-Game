@@ -7,13 +7,17 @@ let cursors;
 let bulletTime = 1;
 let bulletTmeCount= bulletTime;
 let gun ;
+
+let enemies ;
+let strongEnemies;
+let bullets ;
+
+let dificuly=1; //1 - 10 it increases over time
+let points = 0;
 let secCount=5 ;  
 let nextSpawn=0;
-let bulletSpeed=100;  
-
-
-let spawnTime=3;  // frequency of the enemies spawn in seconds 
-
+let bulletSpeed=200;  
+let spawnTime=3;  // frequenca
 class Example extends Phaser.Scene{
     
     constructor(){
@@ -21,7 +25,7 @@ class Example extends Phaser.Scene{
     }
    
     preload(){
-        this.load.image('gun', 'assets/gun.png');
+        this.load.image('barrel', 'assets/barrel.png');
         this.load.image('fox', 'assets/fox.png');
         this.load.image('fish', 'assets/jellyfish.png');
         this.load.image('sky', 'assets/sky.png');
@@ -33,27 +37,33 @@ class Example extends Phaser.Scene{
     }
 
     create(){
+        // zone1 = this.add.zone(300, 50).setSize(5, 500);
         //line1 = this.add.group();
         this.key_A=this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
         this.key_D=this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
 
-
+        enemies = this.physics.add.group(this);
+        strongEnemies = this.physics.add.group(this);
+        bullets = this.add.group(this);
+        
+        this.physics.add.overlap(enemies, bullets, hitEnemy);
+        this.physics.add.collider(strongEnemies, bullets,hitEnemy2);
         this.add.image(400, 300, 'sky');
         fish =this.add.image(200, 100, 'fish');
+        gun =this.add.image(60, 200, 'barrel');
+        gun.setDisplaySize(120,60);
+      
         
-        gun =this.add.image(80, 300, 'gun');
-        gun.displayHeight=90;
-        gun.displayWidth=120;
+       // fish.displayHeight=50;
+       // fish.displayWidth=50;
         
-
-
-        fish.displayHeight=50;
-        fish.displayWidth=50;
         //***Player 
         player = this.physics.add.sprite(100, 450, 'dude');
         player.setBounce(0.2);
         player.setCollideWorldBounds(true);
-
+    
+        
+        
         this.anims.create({
             key: 'left',
             frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 3 }),
@@ -115,40 +125,50 @@ class Example extends Phaser.Scene{
         //this.physics.add.collider(player, platforms);
 
     }
+    /*
 
+    */
     update(time,delta){
+        
         if (time>=bulletTmeCount*1000){
-            bulletTmeCount+=bulletTime; 
-            let bullet =this.physics.add.image(100, 280, 'bullet');
-            bullet.setGravity(0,-200);
-            let bulletYSpeed = ((gun.angle*bulletSpeed)/90);
-           
-            let bulletXPos= Math.cos(gun.angle  *(Math.PI / 180))*gun.displayWidth +10;
-            let bulletYPos= Math.sin(gun.angle * (Math.PI / 180))*10 + 280;
-            bullet.setPosition(bulletXPos,bulletYPos);
             
+            bulletTmeCount+=bulletTime; 
+            let bullet =this.physics.add.image(0, 0, 'bullet');
+            bullet.displayHeight=25;
+            bullet.displayHeight=25;
+            
+            //bullet.body.setSize(25,50);
+            let bulletYSpeed = ((gun.angle*bulletSpeed)/90);     
+            let bulletXPos= Math.cos(gun.angle *(Math.PI / 180.0))*gun.displayWidth/2 + gun.x   ;
+            let bulletYPos= Math.sin(gun.angle *(Math.PI / 180.0))*gun.displayWidth/2  +gun.y  ; 
+            bullet.setPosition(bulletXPos,bulletYPos);
             bullet.setVelocityY(bulletYSpeed);
-            bullet.setVelocityX(bulletSpeed-bulletYSpeed);
-            console.log(gun.angle,Math.cos(gun.angle  *(Math.PI / 180)));
-
+            bullet.setVelocityX(bulletSpeed-Math.abs(bulletYSpeed));
+            bullets.add(bullet);
         }
         //level=how often the spawen time decreses
         if (time>=secCount*1000){
             secCount=secCount+5;// the dificuly will increase every 5 seconds
-            spawnTime-= 0.1;
+            if (spawnTime>=0.5){
+                spawnTime-= 0.1;
+            }
             
         }
         if (time>=nextSpawn){
             nextSpawn=time+spawnTime*1000;
-            this.add.existing(new weakEnemy(this, 600, 150,0));
-            this.add.existing(new weakEnemy(this, 600, 250,0));
-            this.add.existing(new weakEnemy(this, 600, 350,0));
-            this.add.existing(new weakEnemy(this, 600, 450,0));
+            var i;
+            for (i=0; i<5; i++){
+                if (Math.floor(Math.random() * 10) > dificuly ){
+                    enemies.add(this.add.existing(new weakEnemy(this, 600, 50+i*75)));
+                }else {
+                    strongEnemies.add(this.add.existing(new strongEnemy(this, 600, 50+i*75)));
+                }    
+            }
+        
+            
         }
 
-        if (fish.x < 500 ){
-            fish.x++;
-        }
+       
 
         if (cursors.left.isDown)
         {
@@ -175,19 +195,38 @@ class Example extends Phaser.Scene{
         }
 
 
-        if(this.key_A.isDown && gun.angle<=45){
+        if(this.key_D.isDown && gun.angle<=45){
             gun.setAngle(gun.angle +1);
         }
 
-        if(this.key_D.isDown && gun.angle>=(-45)){
+        if(this.key_A.isDown && gun.angle>=(-45)){
             gun.setAngle(gun.angle -1);
         }
     }
 
  
 
-
 }
 
+function hitEnemy (osea, enemy1)
+{
+    points++;
+    enemy1.destroy();
+    //console.log(points);
+    
+}
 
+function hitEnemy2 (bullet, enemy2)
+{
+    enemy2.setBounce(0,0);
+    enemy2.life--;
+    if (enemy2.life===0){
+        enemy2.destroy();
+    }else {
+        bullet.destroy();
+        points++;
+    }
+        console.log(enemy2.life);
+    
+}
 
