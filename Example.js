@@ -7,6 +7,7 @@ let bulletTime = 0.3;
 let bulletTmeCount= bulletTime;
 let gun ;
 let life;
+let lifebar;
 
 let enemies ;
 let strongEnemies;
@@ -26,6 +27,7 @@ class Example extends Phaser.Scene{
    
     preload(){
         this.load.image('barrel', 'assets/barrel.png');
+        this.load.image('lifebar', 'assets/life.png');
         this.load.image('fox', 'assets/fox.png');
         this.load.image('fish', 'assets/jellyfish.png');
         this.load.image('sky', 'assets/sky.png');
@@ -37,15 +39,13 @@ class Example extends Phaser.Scene{
     }
 
     create(){
-        // zone1 = this.add.zone(300, 50).setSize(5, 500);
-        //line1 = this.add.group();
         this.key_A=this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
         this.key_D=this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
 
         enemies = this.physics.add.group(this);
         strongEnemies = this.physics.add.group(this);
         bullets = this.add.group(this);
-  
+        
         this.add.image(400, 300, 'sky');
         gun =this.add.image(60, 200, 'barrel');
         gun.setDisplaySize(120,60);
@@ -56,7 +56,8 @@ class Example extends Phaser.Scene{
         
         this.physics.add.overlap(enemies, bullets, hitEnemy);
         this.physics.add.overlap(strongEnemies, bullets,hitEnemy2);
-        this.physics.add.overlap(allenemies,plataform,hitPlatfrom);
+        this.physics.add.overlap(enemies,plataform,hitPlatfrom);
+        this.physics.add.overlap(strongEnemies,plataform,hitPlatfrom2);
 
 
         //***Player 
@@ -235,12 +236,17 @@ function hitEnemy2 (bullet, enemy2)
         bullet.destroy();
         points++;
     }
-        console.log(enemy2.life);
     
 }
 
 
 function hitPlatfrom (a, b)
+{
+   
+    
+}
+
+function hitPlatfrom2 (a, b)
 {
    
     
