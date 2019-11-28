@@ -1,8 +1,9 @@
 //import weakEnemy from 'weakEnemy.js'
 /** @type {import("../type/phaser")} */
 
-let platform;
+//game.world.centerX
 
+let platform;
 let bulletTime = 0.3;
 let bulletTmeCount= bulletTime;
 let gun ;
@@ -21,6 +22,10 @@ let secCount=5 ;
 let nextSpawn=0;
 let bulletSpeed=200;  
 let spawnTime=3;  // frequenca
+
+//sounds
+let hitEnemySnd;
+
 class Example extends Phaser.Scene{
     
     constructor(){
@@ -28,8 +33,11 @@ class Example extends Phaser.Scene{
     }
    
     preload(){
-        this.load.image('barrel', 'assets/barrel.png');
 
+        this.load.audio('HitEnemySound','assets/Pickup_Coin5.wav');  // urls: an array of file url
+
+        this.load.image('buttonImg', 'assets/blue-square.png');
+        this.load.image('barrel', 'assets/barrel.png');
         this.load.image('lifebar', 'assets/emptyLifeBar.png');
         this.load.image('life', 'assets/life.png');
         this.load.image('fox', 'assets/fox.png');
@@ -37,13 +45,13 @@ class Example extends Phaser.Scene{
         this.load.image('sky', 'assets/sky.png');
         this.load.image('lava', 'assets/lava.png');
         this.load.image('bullet', 'assets/star.png');
-        this.load.image('bomb', 'assets/bomb.png');
         this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
       
     }
 
     create(){
         this.add.image(400, 300, 'sky');
+        hitEnemySnd = this.sound.add('HitEnemySound');
         pointsText=this.add.text(10, 10, 'POINTS: '+points, { fontFamily: '"Roboto Condensed"' });
         pointsText.setColor("000")
         this.key_A=this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
@@ -56,15 +64,30 @@ class Example extends Phaser.Scene{
         gun =this.add.image(60, 200, 'barrel');
         gun.setDisplaySize(120,60);
         
-
+        
+        
         platform =this.physics.add.image(150, 220, 'lava');
         platform.setDisplaySize(50,400);
         lifebar =this.add.existing(new lifeBar(this, 110, 450,200,50));
         let lifeFrame = this.add.image(110,450, 'lifebar');
+        let button1 = this.add.image(300,410, 'buttonImg');
+        button1.setInteractive();
+        button1.setDisplaySize(100,100);
+        button1.setSize(100,100);
+        //game.config.height;
+        
+        
+        button1.on('pointerdown',this.actionOnClick ); //pointerout ,pointerdown ,pointerover, pointerup 
+        //button1.on('pointerdown',() =>  ); //pointerout ,pointerdown ,pointerover, pointerup 
+        
+
         lifeFrame.setDisplaySize(200,35);
         
         lifeText= this.add.text(20, 440, '100/'+life, { fontFamily: 'Verdana, "Times New Roman", Tahoma, serif' });
 
+
+
+        
         
         this.physics.add.overlap(enemies, bullets, hitEnemy);
         this.physics.add.overlap(strongEnemies, bullets,hitEnemy2);
@@ -153,7 +176,10 @@ class Example extends Phaser.Scene{
         }
     }
 
- 
+
+     actionOnClick(){
+        console.log('aja!');   
+    }
 
 }
 
@@ -161,6 +187,8 @@ function hitEnemy (osea, enemy1)
 {
     points++;
     enemy1.destroy();
+    hitEnemySnd.play();
+
     
     //console.log(points);
     
@@ -172,6 +200,7 @@ function hitEnemy2 (bullet, enemy2)
     if (enemy2.life===0){
         points+=2;
         enemy2.destroy();
+        hitEnemySnd.play();
     }else {
         bullet.destroy();
     }
@@ -199,4 +228,8 @@ function hitPlatfrom2 (plat, enemy4)
     lifebar.setLife(life);
 
  
+}
+
+function actionOnClick(){
+    console.log('aja!');   
 }
