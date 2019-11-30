@@ -1,7 +1,7 @@
 //import weakEnemy from 'weakEnemy.js'
 /** @type {import("../type/phaser")} */
 
-//game.world.centerX
+//game.world.centerX         //game.config.height;
 
 let platform;
 let bulletTime = 0.3;
@@ -44,54 +44,57 @@ class Example extends Phaser.Scene{
         this.load.image('fish', 'assets/jellyfish.png');
         this.load.image('sky', 'assets/sky.png');
         this.load.image('lava', 'assets/lava.png');
+        this.load.image('floor', 'assets/floor.png');
+        
         this.load.image('bullet', 'assets/star.png');
         this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
       
     }
 
     create(){
+         //alternative keys
+         this.key_A=this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
+         this.key_D=this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+        //background
         this.add.image(400, 300, 'sky');
+        let flor =this.add.image(game.config.width/2, 215, 'floor');
+        flor.setDisplaySize(game.config.width,400);
+    
         hitEnemySnd = this.sound.add('HitEnemySound');
+        
         pointsText=this.add.text(10, 10, 'POINTS: '+points, { fontFamily: '"Roboto Condensed"' });
-        pointsText.setColor("000")
-        this.key_A=this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
-        this.key_D=this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
-       
-        enemies =       this.physics.add.group(this);
-        strongEnemies = this.physics.add.group(this);
-        bullets =       this.add.group(this);
-
+       // pointsText.setColor("000");
+        
         gun =this.add.image(60, 200, 'barrel');
         gun.setDisplaySize(120,60);
         
-        
-        
-        platform =this.physics.add.image(150, 220, 'lava');
+
+        platform =this.physics.add.image(160, 220, 'lava');
+
         platform.setDisplaySize(50,400);
+        
+        
+        //lifeba
         lifebar =this.add.existing(new lifeBar(this, 110, 450,200,50));
         let lifeFrame = this.add.image(110,450, 'lifebar');
-        let button1 = this.add.image(300,410, 'buttonImg');
+        lifeFrame.setDisplaySize(200,35);
+        lifeText= this.add.text(20, 440, '100/'+life, { fontFamily: 'Verdana, "Times New Roman", Tahoma, serif' });
+        
+        
         button1.setInteractive();
-        button1.setDisplaySize(100,100);
-        button1.setSize(100,100);
-        //game.config.height;
-        
-        
+        button1.setDisplaySize(50,50);
+        button1.setSize(50,50);
         button1.on('pointerdown',this.actionOnClick ); //pointerout ,pointerdown ,pointerover, pointerup 
         //button1.on('pointerdown',() =>  ); //pointerout ,pointerdown ,pointerover, pointerup 
-        
 
-        lifeFrame.setDisplaySize(200,35);
+        //groups
+        enemies =       this.physics.add.group(this);
+        strongEnemies = this.physics.add.group(this);
+        bullets =       this.add.group(this);
         
-        lifeText= this.add.text(20, 440, '100/'+life, { fontFamily: 'Verdana, "Times New Roman", Tahoma, serif' });
-
-
-
-        
-        
+        //coliders 
         this.physics.add.overlap(enemies, bullets, hitEnemy);
         this.physics.add.overlap(strongEnemies, bullets,hitEnemy2);
-        
         this.physics.add.overlap(enemies,platform,hitPlatfrom1)
         this.physics.add.overlap(strongEnemies,platform,hitPlatfrom2);
 
