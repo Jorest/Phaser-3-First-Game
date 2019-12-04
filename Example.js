@@ -4,12 +4,16 @@
 //game.world.centerX         //game.config.height;
 
 let platform;
-let bulletTime = 0.3;
+let bulletTime = 0.2; // attackSpeed less is faster
 let bulletTmeCount= bulletTime;
 let gun ;
 let life=100;
 let lifeText;
 let lifebar;
+
+let gameWidht; 
+let gameHeight;
+let playableHeight; 
 
 let enemies ;
 let strongEnemies;
@@ -20,7 +24,7 @@ let points = 0;
 let pointsText;
 let secCount=5 ;  
 let nextSpawn=0;
-let bulletSpeed=200;  
+let bulletSpeed=300;  
 let spawnTime=3;  // frequenca
 
 //sounds
@@ -33,6 +37,7 @@ class Example extends Phaser.Scene{
     }
    
     preload(){
+
 
         this.load.audio('HitEnemySound','assets/Pickup_Coin5.wav');  // urls: an array of file url
 
@@ -52,17 +57,27 @@ class Example extends Phaser.Scene{
     }
 
     create(){
+        // game size 
+        //maxHeight=game.config.width;
+
+        gameWidht= this.game.config.width;
+        
+        gameHeight= (this.game.config.width>game.config.heigh ? this.game.config.width :0.85*this.game.config.height);
+
          //alternative keys
          this.key_A=this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
          this.key_D=this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
         //background
-        this.add.image(400, 300, 'sky');
-        let flor =this.add.image(game.config.width/2, 215, 'floor');
-        flor.setDisplaySize(game.config.width,400);
+        let sky =this.add.image(game.config.width/2, game.config.height/2, 'sky');
+        sky.setDisplaySize(game.config.width,game.config.height);
+        
+        let flor =this.add.image(game.config.width/2, gameHeight/2, 'floor');
+        flor.setDisplaySize(game.config.width,gameHeight);
     
         hitEnemySnd = this.sound.add('HitEnemySound');
         
-        pointsText=this.add.text(10, 10, 'POINTS: '+points, { fontFamily: '"Roboto Condensed"' });
+        pointsText=this.add.text(10, 0, 'POINTS: '+points, { fontFamily: '"Roboto Condensed"' });
+    
        // pointsText.setColor("000");
         
         gun =this.add.image(60, 200, 'barrel');
@@ -79,8 +94,9 @@ class Example extends Phaser.Scene{
         let lifeFrame = this.add.image(110,450, 'lifebar');
         lifeFrame.setDisplaySize(200,35);
         lifeText= this.add.text(20, 440, '100/'+life, { fontFamily: 'Verdana, "Times New Roman", Tahoma, serif' });
+       
         
-        
+        let button1=this.add.image(100, 500,'buttonImg');
         button1.setInteractive();
         button1.setDisplaySize(50,50);
         button1.setSize(50,50);
