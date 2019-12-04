@@ -13,7 +13,8 @@ let lifebar;
 
 let gameWidht; 
 let gameHeight;
-let playableHeight; 
+let playableHeight;
+let uiHeight; 
 
 let enemies ;
 let strongEnemies;
@@ -58,35 +59,38 @@ class Example extends Phaser.Scene{
 
     create(){
         // game size 
-        //maxHeight=game.config.width;
-
         gameWidht= this.game.config.width;
-        
-        gameHeight= (this.game.config.width>game.config.heigh ? this.game.config.width :0.85*this.game.config.height);
+        gameHeight= (this.game.config.width>game.config.heigh ? this.game.config.width*1.15 :this.game.config.height);
+        playableHeight=(this.game.config.width>game.config.heigh ? this.game.config.width :this.game.config.height*0.85);
+        uiHeight=(this.game.config.width>game.config.heigh ? this.game.config.width*0.15 :this.game.config.height*0.15);
 
          //alternative keys
          this.key_A=this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
          this.key_D=this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
         //background
-        let sky =this.add.image(game.config.width/2, game.config.height/2, 'sky');
-        sky.setDisplaySize(game.config.width,game.config.height);
+        let sky =this.add.image(gameWidht/2, gameHeight/2, 'sky');
+        sky.setDisplaySize(gameWidht,gameHeight);
         
-        let flor =this.add.image(game.config.width/2, gameHeight/2, 'floor');
-        flor.setDisplaySize(game.config.width,gameHeight);
+        let flor =this.add.image(gameWidht/2, playableHeight/2, 'floor');
+        flor.setDisplaySize(game.config.width,playableHeight);
     
         hitEnemySnd = this.sound.add('HitEnemySound');
         
-        pointsText=this.add.text(10, 0, 'POINTS: '+points, { fontFamily: '"Roboto Condensed"' });
+        pointsText=this.add.text(0, 0, 'POINTS: '+points, { fontFamily: '"Roboto Condensed"' });
+        pointsText.setPosition(gameWidht*0.85,gameHeight-uiHeight/2);
     
        // pointsText.setColor("000");
         
-        gun =this.add.image(60, 200, 'barrel');
-        gun.setDisplaySize(120,60);
+        gun =this.add.image(0,0, 'barrel');
+        gun.setSize(gameWidht*0.16,playableHeight*0.15);
+        gun.setDisplaySize(gameWidht*0.16,playableHeight*0.15);
+        gun.setPosition( gun.width/2,playableHeight/2);
+        
         
 
-        platform =this.physics.add.image(160, 220, 'lava');
-
-        platform.setDisplaySize(50,400);
+        platform =this.physics.add.image(0,0, 'lava');
+        platform.setPosition(gun.x+gun.displayWidth*0.8,playableHeight/2);
+        platform.setDisplaySize(gun.displayWidth/2,playableHeight);
         
         
         //lifeba
