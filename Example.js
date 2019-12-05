@@ -4,7 +4,7 @@
 //game.world.centerX         //game.config.height;
 
 let platform;
-let bulletTime = 0.2; // attackSpeed less is faster
+let bulletTime = 0.3; // attackSpeed less is faster
 let bulletTmeCount= bulletTime;
 let gun ;
 let life=100;
@@ -59,10 +59,14 @@ class Example extends Phaser.Scene{
 
     create(){
         // game size 
-        gameWidht= this.game.config.width;
-        gameHeight= (this.game.config.width>game.config.heigh ? this.game.config.width*1.15 :this.game.config.height);
-        playableHeight=(this.game.config.width>game.config.heigh ? this.game.config.width :this.game.config.height*0.85);
-        uiHeight=(this.game.config.width>game.config.heigh ? this.game.config.width*0.15 :this.game.config.height*0.15);
+     
+        gameWidht= game.config.width;
+
+        gameHeight =game.config.height ;
+        
+        
+        playableHeight=(game.config.width>game.config.height) ? this.game.config.height*0.85    : this.game.config.height;
+        uiHeight      =(game.config.width>game.config.height) ? this.game.config.height*0.15    : this.game.config.width*0.15;
 
          //alternative keys
          this.key_A=this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
@@ -70,16 +74,15 @@ class Example extends Phaser.Scene{
         //background
         let sky =this.add.image(gameWidht/2, gameHeight/2, 'sky');
         sky.setDisplaySize(gameWidht,gameHeight);
-        
         let flor =this.add.image(gameWidht/2, playableHeight/2, 'floor');
-        flor.setDisplaySize(game.config.width,playableHeight);
+        flor.setDisplaySize(gameWidht,playableHeight);
     
         hitEnemySnd = this.sound.add('HitEnemySound');
         
         pointsText=this.add.text(0, 0, 'POINTS: '+points, { fontFamily: '"Roboto Condensed"' });
         pointsText.setPosition(gameWidht*0.85,gameHeight-uiHeight/2);
-    
-       // pointsText.setColor("000");
+        pointsText.setColor("000");
+        pointsText.setDisplaySize(gameWidht/10,gameHeight/20);
         
         gun =this.add.image(0,0, 'barrel');
         gun.setSize(gameWidht*0.16,playableHeight*0.15);
@@ -94,13 +97,17 @@ class Example extends Phaser.Scene{
         
         
         //lifeba
-        lifebar =this.add.existing(new lifeBar(this, 110, 450,200,50));
-        let lifeFrame = this.add.image(110,450, 'lifebar');
-        lifeFrame.setDisplaySize(200,35);
-        lifeText= this.add.text(20, 440, '100/'+life, { fontFamily: 'Verdana, "Times New Roman", Tahoma, serif' });
+        let lifeFrame = this.add.image(0,0, 'lifebar');
+        lifeFrame.setDisplaySize(gameWidht/4,uiHeight*0.7)
+        lifeFrame.setPosition(lifeFrame.displayWidth*0.6,gameHeight-uiHeight/2);
+        
+    
+        lifebar =this.add.existing(new lifeBar(this,lifeFrame.x, gameHeight-uiHeight/2,lifeFrame.displayWidth,lifeFrame.displayHeight));
+        //lifeFrame.setDisplaySize(200,35);
+        lifeText= this.add.text(lifeFrame.x/4, gameHeight-uiHeight/2, '100/'+life, { fontFamily: 'Verdana, "Times New Roman", Tahoma, serif' });
        
         
-        let button1=this.add.image(100, 500,'buttonImg');
+        let button1=this.add.image(400, 500,'buttonImg');
         button1.setInteractive();
         button1.setDisplaySize(50,50);
         button1.setSize(50,50);
