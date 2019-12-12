@@ -1,14 +1,14 @@
 class strongEnemy extends Phaser.GameObjects.Image {
-    constructor (scene, x, y)
+    constructor (scene, x, y,nwidth,nheight)
       {
           super(scene, x, y,'fish');
           //this.setTexture('fox');
           //scene.add.existing(this);
-          this.displayHeight=50;
-          this.displayWidth=50;
-          this.setSize(50,50);
+          this.displayHeight=nheight;
+          this.displayWidth=nwidth;
+          this.setSize(nwidth,nheight);
           this.life=2;
-          this.speed=1.2;
+          this.speed=nwidth/45;
   
       }
   
