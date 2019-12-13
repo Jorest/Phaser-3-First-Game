@@ -133,8 +133,8 @@ class Example extends Phaser.Scene{
             
             bulletTmeCount+=bulletTime; 
             let bullet =this.physics.add.image(0, 0, 'bullet');
-            bullet.displayHeight=25;
-            bullet.displayHeight=25;
+            bullet.displayHeight=playableHeight/17;
+            bullet.displayWidth=playableHeight/17;
             
             //bullet.body.setSize(25,50);
             let bulletYSpeed = ((gun.angle*bulletSpeed)/90);     
@@ -164,9 +164,9 @@ class Example extends Phaser.Scene{
             var i;
             for (i=0; i<5; i++){
                 if (Math.floor(Math.random() * 10) > dificulty ){
-                    enemies.add(this.add.existing(new weakEnemy(this, 800, 50+i*75,gameWidth/15,playableHeight/15)));
+                    enemies.add(this.add.existing(new weakEnemy         (this, gameWidth,(playableHeight/10)+i*playableHeight/5,gameWidth/15,playableHeight/7)));
                 }else {
-                    strongEnemies.add(this.add.existing(new strongEnemy(this, 800, 50+i*75,gameWidth/15,playableHeight/15)));
+                    strongEnemies.add(this.add.existing(new strongEnemy (this, gameWidth,(playableHeight/10)+i*playableHeight/5,gameWidth/15,playableHeight/7)));
                 }    
             }
         
